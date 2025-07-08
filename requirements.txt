@@ -1,1 +1,7 @@
 streamlit
+pandas
+numpy
+sklearn
+dagshub
+mlflow==2.22
+lightgbm
