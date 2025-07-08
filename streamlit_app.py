@@ -10,7 +10,7 @@ import dagshub
 dagshub.auth.add_app_token('7ff59a8ec595a39c81790087b5fe632c13a71e8c')
 dagshub.init(repo_owner='jonathan.durand25', repo_name='OC_P7', mlflow=True)
 
-app_train = pd.read_csv('application_train.csv')
+app_train = pd.read_csv('https://drive.google.com/file/d/16RR6zIzq2JKPMXHsT8jirXaW62jGc8W6/view?usp=drive_link')
 print("Lecture données OK")
 
 # Create a label encoder object
@@ -59,13 +59,14 @@ print('data scaled')
 model = mlflow.sklearn.load_model('runs:/4c4532ba1c904fcc98b806296cb62f6a/RF_full')
 print('model loaded')
 
-st.markdown("# Main page 🎈")
-st.sidebar.markdown("# Main page 🎈")
+def main():
+    st.markdown("# Main page 🎈")
+    st.sidebar.markdown("# Main page 🎈")
 
-client = st.selectbox(
-    "How would you like to be contacted?",
-    app_train['SK_ID_CURR'].values,
-    index=None,
-    placeholder="Select client",
-)
-st.session_state['client'] = client
+    client = st.selectbox(
+        "How would you like to be contacted?",
+        app_train['SK_ID_CURR'].values,
+        index=None,
+        placeholder="Select client"
+    )
+    st.session_state['client'] = client
