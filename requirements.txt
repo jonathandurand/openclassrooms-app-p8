@@ -6,3 +6,4 @@ scikit-learn
 dagshub
 mlflow==2.22
 lightgbm
+matplotlib
