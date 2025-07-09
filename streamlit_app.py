@@ -11,8 +11,8 @@ import mlflow
 import dagshub
 
 def init():
-    dagshub.auth.add_app_token('7ff59a8ec595a39c81790087b5fe632c13a71e8c')
-    dagshub.init(repo_owner='jonathan.durand25', repo_name='OC_P7', mlflow=True)
+    #dagshub.auth.add_app_token('7ff59a8ec595a39c81790087b5fe632c13a71e8c')
+    #dagshub.init(repo_owner='jonathan.durand25', repo_name='OC_P7', mlflow=True)
 
     app_train_1 = pd.read_csv('datas/app_train_1.csv')
     app_train_2 = pd.read_csv('datas/app_train_2.csv')
