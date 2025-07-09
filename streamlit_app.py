@@ -119,7 +119,9 @@ def main():
         
 
 if __name__ == "__main__":
+    print('start')
     if 'initialized' not in st.session_state or not st.session_state.initialized:
+        print('init')
         init()
         st.session_state.initialized = True
     
