@@ -4,7 +4,7 @@ pandas
 numpy
 scikit-learn
 dagshub
-mlflow==2.22
+mlflow==3.1.0
 lightgbm
 matplotlib
 shap
