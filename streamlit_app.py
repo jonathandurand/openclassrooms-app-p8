@@ -88,7 +88,7 @@ def init():
     st.session_state['data_sel'] = data[st.session_state['features_sel']]
     print('data sel')
 
-    st.session_state['explainer'] = shap.KernelExplainer(st.session_state['model'].predict, data=st.session_state['data_sel'])
+    st.session_state['explainer'] = shap.TreeExplainer(st.session_state['model_learn'])
     print('shap')
 
 def main():
