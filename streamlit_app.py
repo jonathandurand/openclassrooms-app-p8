@@ -10,6 +10,8 @@ import mlflow
 
 import dagshub
 
+import shap
+
 def init():
     dagshub.auth.add_app_token('7ff59a8ec595a39c81790087b5fe632c13a71e8c')
     dagshub.init(repo_owner='jonathan.durand25', repo_name='OC_P7', mlflow=True)
@@ -19,7 +21,6 @@ def init():
     #app_train_3 = pd.read_csv('datas/app_train_3.csv')
     #app_train_4 = pd.read_csv('datas/app_train_4.csv')
     #app_train = pd.concat([app_train_1, app_train_2, app_train_3, app_train_4])
-    #app_train = pd.read_csv('https://drive.google.com/file/d/16RR6zIzq2JKPMXHsT8jirXaW62jGc8W6/view?usp=drive_link')
     print("Lecture données OK")
 
     app_train['BIRTH_YEARS'] = app_train['DAYS_BIRTH'] / -365
@@ -66,12 +67,15 @@ def init():
     scaler_minMax.fit(data);
 
     data_scaledMM = scaler_minMax.transform(data)
+    data_scaledMM = pd.DataFrame(data=data_scaledMM, columns = data.columns)
     st.session_state['data_scaledMM'] = data_scaledMM
 
     print('data scaled')
     print(data_scaledMM.shape)
 
-    st.session_state['model'] = mlflow.sklearn.load_model('runs:/4c4532ba1c904fcc98b806296cb62f6a/RF_full')
+    st.session_state['model'] = mlflow.pyfunc.load_model('runs:/4e1e5e9e3f3f48fda5eb52dbc836038c/model')
+    st.session_state['model_learn'] = mlflow.sklearn.load_model('runs:/fa1ccfb2e0814e3d9261f7098c3d60c9/RF_sel_med')
+    st.session_state['threshold'] = 0.56
     print('model loaded')
 
     st.session_state['features_sel'] = ['EXT_SOURCE_2',
@@ -81,6 +85,11 @@ def init():
                 'AMT_CREDIT',
                 'AMT_ANNUITY',
                 'DAYS_LAST_PHONE_CHANGE']
+    st.session_state['data_sel'] = data[st.session_state['features_sel']]
+    print('data sel')
+
+    st.session_state['explainer'] = shap.KernelExplainer(st.session_state['model'].predict, data=st.session_state['data_sel'])
+    print('shap')
 
 def main():
     st.markdown("# Main page 🎈")
@@ -99,7 +108,14 @@ def main():
 
     if right.button("Mise à jour client"):
         st.session_state['client'] =  client
+        st.session_state['index'] = st.session_state['app_train'].index[st.session_state['app_train']['SK_ID_CURR']==st.session_state['client']]
         st.session_state['row'] = st.session_state['app_train'].loc[st.session_state['app_train']['SK_ID_CURR']==st.session_state['client']]
+        st.session_state['row_scaledMM'] = st.session_state['data_scaledMM'].iloc[st.session_state['index']]
+        st.session_state['score'] = st.session_state['model_learn'].predict_proba(st.session_state['row_scaledMM'][st.session_state['features_sel']])[0, 1]
+        if st.session_state['score']<st.session_state['threshold']:
+            st.session_state['color'] = 'red'
+        else:
+            st.session_state['color'] = 'green'
 
     if 'client' in st.session_state:
         print(st.session_state['client'])
@@ -109,20 +125,20 @@ def main():
         st.table(st.session_state['row'][['NAME_FAMILY_STATUS', 'NAME_INCOME_TYPE']])
         fig = go.Figure(go.Indicator(
             mode = "gauge+number",
-            value = 0.5,
+            value = st.session_state['score'],
             domain = {'x': [0, 1], 'y': [0, 1]},
             title = {'text': "Score"},
             gauge = {'axis': {'range': [None, 1]},
-                'threshold' : {'line': {'color': "red"}, 'value': 0.5}}))
+                     'bar': {'color': st.session_state['color']},
+                     'threshold' : {'line': {'color': "red"}, 'value': st.session_state['threshold']}}))
         st.plotly_chart(fig)
         #st.session_state['model'].predict_proba(st.session_state['data_scaledMM'][st.session_state['index']].reshape(1,239))[:,1]
         
 
 if __name__ == "__main__":
-    print('start')
     if 'initialized' not in st.session_state or not st.session_state.initialized:
-        print('init')
-        init()
-        st.session_state.initialized = True
+        with st.spinner("Initialisation"):
+            init()
+            st.session_state.initialized = True
     
     main()

@@ -7,3 +7,4 @@ dagshub
 mlflow==2.22
 lightgbm
 matplotlib
+shap
