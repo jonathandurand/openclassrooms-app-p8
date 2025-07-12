@@ -7,6 +7,10 @@ import plotly.graph_objects as go
 
 import shap
 
+import utils.func_cache as fc
+
+model, model_learn = fc.models_load()
+
 st.markdown("# Profil ❄️")
 st.sidebar.markdown("# Profil ❄️")
 
@@ -28,7 +32,7 @@ right.plotly_chart(fig)
     
 st.markdown("## Facteurs de prédiction")
 
-plot_data = pd.DataFrame(index=st.session_state['features_sel'], data = st.session_state['model_learn'].feature_importances_)
+plot_data = pd.DataFrame(index=st.session_state['features_sel'], data = model_learn.feature_importances_)
 
 left, right = st.columns(2, vertical_alignment="top")
 
@@ -37,7 +41,7 @@ right.bar_chart(plot_data)
 
 #print('sharp start')
 with st.spinner("Calcul de l'importance locale"):
-    shap_vals = st.session_state['explainer'].shap_values(st.session_state['row_scaledMM'][st.session_state['features_sel']])
+    shap_vals = fc.shap_values_calcul(model_learn, st.session_state['row_scaledMM'][st.session_state['features_sel']])
 print(shap_vals)
 
 plot_data2 = pd.DataFrame(data=shap_vals[:,:,1], columns=st.session_state['features_sel']).transpose()

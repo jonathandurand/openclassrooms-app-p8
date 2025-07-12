@@ -3,8 +3,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+import utils.func_cache as fc
+
 st.markdown("# Comparaison 🎉")
 st.sidebar.markdown("# Comparaison 🎉")
+
+app_train = fc.app_train_load('datas/app_train_1.csv')
 
 left, right = st.columns(2, vertical_alignment="bottom")
 
@@ -25,7 +29,7 @@ with left.container():
     
     if 'var1' in st.session_state:
         fig, ax = plt.subplots()
-        n, bins, patches = ax.hist(st.session_state['app_train'][st.session_state['var1']])
+        n, bins, patches = ax.hist(app_train[st.session_state['var1']])
         i_max = np.max(np.where(bins<=st.session_state['row'][st.session_state['var1']].values))
         patches[i_max].set_color('red')
         ax.add_patch(patches[i_max])
@@ -48,7 +52,7 @@ with right.container():
     
     if 'var2' in st.session_state:
         fig, ax = plt.subplots()
-        n, bins, patches = ax.hist(st.session_state['app_train'][st.session_state['var2']])
+        n, bins, patches = ax.hist(app_train[st.session_state['var2']])
         i_max = np.max(np.where(bins<=st.session_state['row'][st.session_state['var2']].values))
         patches[i_max].set_color('red')
         ax.add_patch(patches[i_max])
@@ -57,6 +61,6 @@ with right.container():
 if 'var1' in st.session_state and 'var2' in st.session_state:
     st.markdown("## Analyse bi-variée")
     fig, ax = plt.subplots()
-    ax.scatter(st.session_state['app_train'][st.session_state['var1']], st.session_state['app_train'][st.session_state['var2']])
+    ax.scatter(app_train[st.session_state['var1']], app_train[st.session_state['var2']])
     ax.scatter(st.session_state['row'][st.session_state['var1']], st.session_state['row'][st.session_state['var2']], color='r')
     st.pyplot(fig)
