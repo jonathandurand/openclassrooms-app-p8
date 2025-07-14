@@ -18,9 +18,9 @@ def app_train_load(csv_file):
     app_train['BIRTH_YEARS'] = app_train['DAYS_BIRTH'] / -365
     app_train = app_train.drop('DAYS_BIRTH', axis=1)
 
-    app_train['DAYS_EMPLOYED_ANOM'] = app_train["DAYS_EMPLOYED"] == 365243
+    #app_train['DAYS_EMPLOYED_ANOM'] = app_train["DAYS_EMPLOYED"] == 365243
 
-    app_train['DAYS_EMPLOYED'].replace({365243: np.nan})
+    app_train['DAYS_EMPLOYED'] = app_train['DAYS_EMPLOYED'].replace({365243: np.nan})
 
     return app_train
 

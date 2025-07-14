@@ -28,7 +28,7 @@ def init():
 
     model, model_learn = fc.models_load()
 
-    st.session_state['threshold'] = 0.56
+    st.session_state['threshold'] = 0.04
     print('model loaded')
 
     st.session_state['features_sel'] = ['EXT_SOURCE_2',
@@ -71,25 +71,22 @@ def main():
         st.session_state['row_scaledMM'] = data_scaledMM.iloc[st.session_state['index']]
         st.session_state['score'] = model_learn.predict_proba(st.session_state['row_scaledMM'][st.session_state['features_sel']])[0, 1]
         if st.session_state['score']<st.session_state['threshold']:
-            st.session_state['color'] = 'red'
-        else:
             st.session_state['color'] = 'green'
+        else:
+            st.session_state['color'] = 'red'
 
     if 'client' in st.session_state:
         print(st.session_state['client'])
+        print(st.session_state['row'][st.session_state['features_sel']])
+        print(st.session_state['row_scaledMM'][st.session_state['features_sel']])
 
         st.markdown("## Client {}".format(st.session_state['client']))
-        st.session_state['index'] = np.where(app_train['SK_ID_CURR']==st.session_state['client'])
+        if st.session_state['color']=='green':
+            st.markdown("### :green[Client sans risque]")
+        else:
+            st.markdown("### :red[Client à risque]")
         st.table(st.session_state['row'][['NAME_FAMILY_STATUS', 'NAME_INCOME_TYPE']])
-        fig = go.Figure(go.Indicator(
-            mode = "gauge+number",
-            value = st.session_state['score'],
-            domain = {'x': [0, 1], 'y': [0, 1]},
-            title = {'text': "Score"},
-            gauge = {'axis': {'range': [None, 1]},
-                     'bar': {'color': st.session_state['color']},
-                     'threshold' : {'line': {'color': "red"}, 'value': st.session_state['threshold']}}))
-        st.plotly_chart(fig)
+        
         #st.session_state['model'].predict_proba(st.session_state['data_scaledMM'][st.session_state['index']].reshape(1,239))[:,1]
         
 
