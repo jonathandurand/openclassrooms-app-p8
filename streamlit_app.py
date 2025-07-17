@@ -65,7 +65,7 @@ if __name__ == "__main__":
     )
 
     if 'initialized' not in st.session_state or not st.session_state.initialized:
-        with st.spinner("Initialisation", show_time=True):
+        with st.spinner("Initialisation (20s)", show_time=True):
             init()
         st.session_state.initialized = True
     

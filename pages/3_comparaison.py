@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 import utils.func_cache as fc
 
-st.markdown("# Comparaison 🎉")
-st.sidebar.markdown("# Comparaison 🎉")
+st.markdown("# Comparaison")
+st.sidebar.markdown("# Comparaison")
 
 app_train = fc.app_train_load('datas/app_train_1.csv')
 
