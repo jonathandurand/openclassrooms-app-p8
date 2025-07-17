@@ -11,13 +11,13 @@ import utils.func_cache as fc
 
 model, model_learn = fc.models_load()
 
-st.markdown("# Profil ❄️")
-st.sidebar.markdown("# Profil ❄️")
+st.markdown("# Profil")
+st.sidebar.markdown("# Profil")
 
 st.markdown("## Client {}".format(st.session_state['client']))
 
 left, right = st.columns(2, vertical_alignment="top")
-left.table(st.session_state['row'][st.session_state['features_sel']].transpose())
+left.dataframe(st.session_state['row_print_profil'].transpose().style.format(precision=1))
 
 fig = go.Figure(go.Indicator(
     mode = "gauge+number",
@@ -42,7 +42,7 @@ right.bar_chart(plot_data)
 #print('sharp start')
 with st.spinner("Calcul de l'importance locale"):
     shap_vals = fc.shap_values_calcul(model_learn, st.session_state['row_scaledMM'][st.session_state['features_sel']])
-print(shap_vals)
+#print(shap_vals)
 
 plot_data2 = pd.DataFrame(data=shap_vals[:,:,1], columns=st.session_state['features_sel']).transpose()
 

@@ -12,6 +12,14 @@ import shap
 
 from sklearn.ensemble._forest import RandomForestClassifier
 
+import boto3
+import json
+
+global app_name
+global region
+app_name = 'my-deployment-attemp'
+region = 'us-east-1'
+
 @st.cache_data
 def app_train_load(csv_file):
     app_train = pd.read_csv(csv_file)
@@ -75,3 +83,52 @@ def shap_values_calcul(model, row):
     explainer = shap.TreeExplainer(model)
     shap_vals = explainer.shap_values(row)
     return shap_vals
+
+def query_endpoint(app_name, input_json):
+	client = boto3.session.Session().client('sagemaker-runtime', region)
+
+	response = client.invoke_endpoint(
+		EndpointName = app_name,
+		Body = input_json,
+		ContentType = 'application/json'#'; format=pandas-split',
+		)
+
+	preds = response['Body'].read().decode('ascii')
+	preds = json.loads(preds)
+	#print('Received response: {}'.format(preds))
+	return preds
+
+def predict_API(data_sel):
+    query_input = pd.DataFrame(data_sel).to_dict(orient='split')
+    data = {"dataframe_split": query_input}
+    byte_data = json.dumps(data).encode('utf-8')
+    
+    pred = query_endpoint(app_name=app_name, input_json=byte_data)
+
+    pred_bin = pred['predictions'][0]
+
+    return pred_bin
+
+def row_print_client(row):
+    row_return = row.rename(columns={'SK_ID_CURR':'Identifiant',
+                                     'CODE_GENDER':'Genre',
+                                     'BIRTH_YEARS':'Age',
+                                     'NAME_FAMILY_STATUS':'Situation familiale',
+                                     'CNT_CHILDREN':'Nombre d\'enfants',
+                                     'NAME_INCOME_TYPE':'Situation professionnelle'
+                                     }
+                                     )
+    row_return['Age'] = int(row_return['Age'])
+    return row_return
+
+def row_print_profil(row):
+    row_return = pd.DataFrame()
+    row_return['Source ext (2)'] =row['EXT_SOURCE_2']
+    row_return['Source ext (3)'] = row['EXT_SOURCE_3']
+    row_return['Emploi (a)'] = row['DAYS_EMPLOYED']/(-365)
+    row_return['Age'] = row['BIRTH_YEARS']
+    row_return['Total crédit (k€)'] = row['AMT_CREDIT']/1000
+    row_return['Annuité (k€)'] = row['AMT_ANNUITY']/1000
+    row_return['Chgt tél (a)'] = row['DAYS_LAST_PHONE_CHANGE']/(-365)
+
+    return row_return

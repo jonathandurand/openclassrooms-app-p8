@@ -29,10 +29,13 @@ with left.container():
     
     if 'var1' in st.session_state:
         fig, ax = plt.subplots()
-        n, bins, patches = ax.hist(app_train[st.session_state['var1']])
+        n, bins, patches = ax.hist(app_train[st.session_state['var1']], bins=50)
         i_max = np.max(np.where(bins<=st.session_state['row'][st.session_state['var1']].values))
         patches[i_max].set_color('red')
         ax.add_patch(patches[i_max])
+        ax.set_title(st.session_state['var1']+' : densité')
+        ax.set_xlabel(st.session_state['var1'])
+        ax.set_ylabel('Effectif')
         st.pyplot(fig)
 
 with right.container():
@@ -52,10 +55,13 @@ with right.container():
     
     if 'var2' in st.session_state:
         fig, ax = plt.subplots()
-        n, bins, patches = ax.hist(app_train[st.session_state['var2']])
+        n, bins, patches = ax.hist(app_train[st.session_state['var2']], bins=50)
         i_max = np.max(np.where(bins<=st.session_state['row'][st.session_state['var2']].values))
         patches[i_max].set_color('red')
         ax.add_patch(patches[i_max])
+        ax.set_title(st.session_state['var2']+' : densité')
+        ax.set_xlabel(st.session_state['var2'])
+        ax.set_ylabel('Effectif')
         st.pyplot(fig)
 
 if 'var1' in st.session_state and 'var2' in st.session_state:
@@ -63,4 +69,7 @@ if 'var1' in st.session_state and 'var2' in st.session_state:
     fig, ax = plt.subplots()
     ax.scatter(app_train[st.session_state['var1']], app_train[st.session_state['var2']])
     ax.scatter(st.session_state['row'][st.session_state['var1']], st.session_state['row'][st.session_state['var2']], color='r')
+    ax.set_title('Analyse bi-variée')
+    ax.set_xlabel(st.session_state['var1'])
+    ax.set_ylabel(st.session_state['var2'])
     st.pyplot(fig)

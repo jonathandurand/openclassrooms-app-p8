@@ -1,12 +1,6 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-
-import plotly.graph_objects as go
 
 import utils.func_cache as fc
-
-import shap
 
 def init():
 
@@ -43,56 +37,36 @@ def init():
 
     #st.session_state['explainer'] = shap.TreeExplainer(st.session_state['model_learn'])
     #print('shap')
-
-def main():
-    st.markdown("# Main page 🎈")
-    st.sidebar.markdown("# Main page 🎈")
-
-    app_train = fc.app_train_load('datas/app_train_1.csv')
-
-    st.markdown("## Choix du client")
-    left, right = st.columns(2, vertical_alignment="bottom")
-
-    client = left.selectbox(
-        label = "Client",
-        options=app_train['SK_ID_CURR'].values,
-        index=None,
-        placeholder="Sélectionner un client",
-        label_visibility="collapsed"
-    )
-
-    if right.button("Mise à jour client"):
-        data = fc.data_calcul(app_train)
-        data_scaledMM = fc.data_scaledMM_calcul(data)
-        model, model_learn = fc.models_load()
-        st.session_state['client'] =  client
-        st.session_state['index'] = app_train.index[app_train['SK_ID_CURR']==st.session_state['client']]
-        st.session_state['row'] = app_train.loc[app_train['SK_ID_CURR']==st.session_state['client']]
-        st.session_state['row_scaledMM'] = data_scaledMM.iloc[st.session_state['index']]
-        st.session_state['score'] = model_learn.predict_proba(st.session_state['row_scaledMM'][st.session_state['features_sel']])[0, 1]
-        if st.session_state['score']<st.session_state['threshold']:
-            st.session_state['color'] = 'green'
-        else:
-            st.session_state['color'] = 'red'
-
-    if 'client' in st.session_state:
-        print(st.session_state['client'])
-        print(st.session_state['row'][st.session_state['features_sel']])
-        print(st.session_state['row_scaledMM'][st.session_state['features_sel']])
-
-        st.markdown("## Client {}".format(st.session_state['client']))
-        if st.session_state['color']=='green':
-            st.markdown("### :green[Client sans risque]")
-        else:
-            st.markdown("### :red[Client à risque]")
-        st.table(st.session_state['row'][['NAME_FAMILY_STATUS', 'NAME_INCOME_TYPE']])
-        
-        #st.session_state['model'].predict_proba(st.session_state['data_scaledMM'][st.session_state['index']].reshape(1,239))[:,1]
         
 
 if __name__ == "__main__":
+
+    st.markdown("# Page principale")
+    st.sidebar.markdown("# Page principale")
+
+    st.write(
+        """   
+## Instructions d'utilisation
+- Attendre l'initialisation (page principale)
+- Choisir le client (page client)
+- Premier affichage (page client)
+    - Affichage de la prédiction de l'API en couleur
+    - Affichage des caractéristiques principales du client
+- Détail de la prédiction (page profil)
+    - Composantes utilisées pour la prédiction
+    - Détail de la probabilité
+    - Importance locale (autour du client sélectionné)
+    - Importance globale des variables
+- Position du client dans les données totales (page comparaison)
+    - Choix de deux variables
+    - Densité en histogramme
+    - Nuage de points bi-varié
+        """
+    )
+
     if 'initialized' not in st.session_state or not st.session_state.initialized:
-        init()
+        with st.spinner("Initialisation", show_time=True):
+            init()
         st.session_state.initialized = True
     
-    main()
+    st.success("Application initialisée")
