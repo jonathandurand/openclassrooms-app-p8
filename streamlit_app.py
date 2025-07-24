@@ -27,6 +27,9 @@ def init():
                 'DAYS_LAST_PHONE_CHANGE']
     data_sel_scaledMM = fc.data_sel_scaledMM_calcul(app_train[st.session_state['features_sel']])
     print('data sel')
+
+    app_train['pred'] = fc.predict_model_tot(data_sel_scaledMM, model_learn, st.session_state['threshold'])
+    print('pred_tot')
         
 
 if __name__ == "__main__":
@@ -47,7 +50,7 @@ if __name__ == "__main__":
     - Détail de la probabilité
     - Importance locale (autour du client sélectionné)
     - Importance globale des variables
-- Position du client dans les données totales (page comparaison)
+- Position du client dans les données prédites positives (page comparaison)
     - Choix de deux variables
     - Densité en histogramme
     - Nuage de points bi-varié

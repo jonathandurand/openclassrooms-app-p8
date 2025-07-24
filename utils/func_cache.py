@@ -104,3 +104,8 @@ def row_print_profil(row):
     row_return['Chgt tél (a)'] = row['DAYS_LAST_PHONE_CHANGE']/(-365)
 
     return row_return
+
+@st.cache_resource(hash_funcs={RandomForestClassifier: id})
+def predict_model_tot(data_sel_scaled, model_learn, threshold):
+    probas = model_learn.predict_proba(data_sel_scaled)[:,1]
+    return (probas>=threshold)*1

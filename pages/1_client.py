@@ -11,8 +11,8 @@ left, right = st.columns(2, vertical_alignment="bottom")
 
 global color_array
 global markdown_array
-color_array = ['green', 'red']
-markdown_array = ["### :green[Client sans risque]", "### :red[Client à risque]"]
+color_array = ['blue', 'red']
+markdown_array = ["### :blue[Client sans risque (OK)]", "### :red[Client à risque (KO)]"]
 
 client = left.selectbox(
     label = "Client",
@@ -37,11 +37,11 @@ if right.button("Mise à jour client"):
     st.session_state['color'] = color_array[st.session_state['pred_bin']]
 
 if 'client' in st.session_state:
-    print(st.session_state['client'])
-    print(st.session_state['row'][st.session_state['features_sel']])
-    print(st.session_state['row_sel_scaledMM'])
-    print(model_learn.predict_proba(st.session_state['row_sel_scaledMM']))
-    print(st.session_state['score'])
+    #print(st.session_state['client'])
+    #print(st.session_state['row'][st.session_state['features_sel']])
+    #print(st.session_state['row_sel_scaledMM'])
+    #print(model_learn.predict_proba(st.session_state['row_sel_scaledMM']))
+    #print(st.session_state['score'])
 
     st.markdown("## Client {}".format(st.session_state['client']))
     st.markdown(markdown_array[st.session_state['pred_bin']])

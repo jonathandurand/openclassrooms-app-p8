@@ -11,8 +11,10 @@ model, model_learn = fc.models_load()
 st.markdown("# Profil")
 st.sidebar.markdown("# Profil")
 
+global markdown_array
+markdown_array = [":blue[sans risque (OK)]", ":red[à risque (KO)]"]
 
-st.markdown("## Client {}".format(st.session_state['client']))
+st.markdown("## Client {} : {}".format(st.session_state['client'], markdown_array[st.session_state['pred_bin']]))
 left, right = st.columns(2, vertical_alignment="top")
 
 left.dataframe(st.session_state['row_print_profil'].transpose().style.format(precision=1))
