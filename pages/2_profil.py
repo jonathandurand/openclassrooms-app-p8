@@ -38,7 +38,7 @@ right.bar_chart(plot_data)
 
 left.markdown("### Importance locale")
 with st.spinner("Calcul de l'importance locale"):
-    shap_vals = fc.shap_values_calcul(model_learn, st.session_state['row_scaledMM'][st.session_state['features_sel']])
+    shap_vals = fc.shap_values_calcul(model_learn, st.session_state['row_sel_scaledMM'])
 
 
 plot_data2 = pd.DataFrame(data=shap_vals[:,:,1], columns=st.session_state['features_sel']).transpose()

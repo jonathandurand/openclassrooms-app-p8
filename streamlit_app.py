@@ -12,13 +12,6 @@ def init():
     #app_train = pd.concat([app_train_1, app_train_2, app_train_3, app_train_4])
     print("Lecture données OK")
     print(app_train.shape)
-    
-    data = fc.data_calcul(app_train)
-    
-    data_scaledMM = fc.data_scaledMM_calcul(data)
-
-    print('data scaled')
-    print(data_scaledMM.shape)
 
     model, model_learn = fc.models_load()
 
@@ -32,11 +25,8 @@ def init():
                 'AMT_CREDIT',
                 'AMT_ANNUITY',
                 'DAYS_LAST_PHONE_CHANGE']
-    st.session_state['data_sel'] = data[st.session_state['features_sel']]
+    data_sel_scaledMM = fc.data_sel_scaledMM_calcul(app_train[st.session_state['features_sel']])
     print('data sel')
-
-    #st.session_state['explainer'] = shap.TreeExplainer(st.session_state['model_learn'])
-    #print('shap')
         
 
 if __name__ == "__main__":

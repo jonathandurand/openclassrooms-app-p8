@@ -23,23 +23,25 @@ client = left.selectbox(
 )
 
 if right.button("Mise à jour client"):
-    data = fc.data_calcul(app_train)
-    data_scaledMM = fc.data_scaledMM_calcul(data)
+    #data = fc.data_calcul(app_train)
+    data_sel_scaledMM = fc.data_sel_scaledMM_calcul(app_train[st.session_state['features_sel']])
     model, model_learn = fc.models_load()
     st.session_state['client'] =  client
     index = app_train.index[app_train['SK_ID_CURR']==st.session_state['client']]
     st.session_state['row'] = app_train.loc[app_train['SK_ID_CURR']==st.session_state['client']]
     st.session_state['row_print_client'] = fc.row_print_client(st.session_state['row'])
     st.session_state['row_print_profil'] = fc.row_print_profil(st.session_state['row'])
-    st.session_state['row_scaledMM'] = data_scaledMM.iloc[index]
-    st.session_state['score'] = model_learn.predict_proba(st.session_state['row_scaledMM'][st.session_state['features_sel']])[0, 1]
+    st.session_state['row_sel_scaledMM'] = data_sel_scaledMM.iloc[index]
+    st.session_state['score'] = model_learn.predict_proba(st.session_state['row_sel_scaledMM'])[0, 1]
     st.session_state['pred_bin'] = fc.predict_API(st.session_state['row'][st.session_state['features_sel']])
     st.session_state['color'] = color_array[st.session_state['pred_bin']]
 
 if 'client' in st.session_state:
-    #print(st.session_state['client'])
-    #print(st.session_state['row'][st.session_state['features_sel']])
-    #print(st.session_state['row_scaledMM'][st.session_state['features_sel']])
+    print(st.session_state['client'])
+    print(st.session_state['row'][st.session_state['features_sel']])
+    print(st.session_state['row_sel_scaledMM'])
+    print(model_learn.predict_proba(st.session_state['row_sel_scaledMM']))
+    print(st.session_state['score'])
 
     st.markdown("## Client {}".format(st.session_state['client']))
     st.markdown(markdown_array[st.session_state['pred_bin']])

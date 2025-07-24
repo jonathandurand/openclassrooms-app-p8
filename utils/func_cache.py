@@ -33,41 +33,13 @@ def app_train_load(csv_file):
     return app_train
 
 @st.cache_data
-def data_calcul(app_train):
-    app_train_enc = app_train.copy()
+def data_sel_scaledMM_calcul(data):
+    data_scaledMM = data.copy()
 
-    # Create a label encoder object
-    le = LabelEncoder()
-    le_count = 0
+    minmax = pd.read_csv('datas/minmax_df.csv', index_col=0)
+    for c in minmax.index:
+        data_scaledMM[c] = (data[c]-minmax['min'][c])/(minmax['max'][c]-minmax['min'][c])
 
-    # Iterate through the columns
-    for col in app_train_enc:
-        if app_train_enc[col].dtype == 'object':
-            # If 2 or fewer unique categories
-            if len(list(app_train_enc[col].unique())) <= 2:
-                # Train on the training data
-                le.fit(app_train_enc[col])
-                # Transform both training and testing data
-                app_train_enc[col] = le.transform(app_train_enc[col])
-
-                # Keep track of how many columns were label encoded
-                le_count += 1
-
-    app_train_enc = pd.get_dummies(app_train_enc)
-
-    app_train_enc = app_train_enc.drop(columns = ['CODE_GENDER_XNA', 'NAME_INCOME_TYPE_Maternity leave', 'NAME_FAMILY_STATUS_Unknown'])
-
-    data = app_train_enc.drop(columns = ['TARGET'])
-
-    return data
-
-@st.cache_data
-def data_scaledMM_calcul(data):
-    scaler_minMax = MinMaxScaler(feature_range = (0, 1))
-    scaler_minMax.fit(data);
-
-    data_scaledMM = scaler_minMax.transform(data)
-    data_scaledMM = pd.DataFrame(data=data_scaledMM, columns = data.columns)
     return data_scaledMM
 
 @st.cache_resource
